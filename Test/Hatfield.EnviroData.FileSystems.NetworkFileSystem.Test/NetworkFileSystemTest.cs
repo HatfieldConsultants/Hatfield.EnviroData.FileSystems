@@ -13,11 +13,26 @@ namespace Hatfield.EnviroData.FileSystems.NetworkFileSystem.Test
     {
         [Test]
         [ExpectedException(typeof(IOException))]
-        public void InvalidNetworkDownloadTest()
+        [TestCase(@"\\machine-name\invalid\path\to\file.ext")]
+        [TestCase(@"\\machine-name\invalid\path\to\directory")]
+        public void NetworkFileSystemThisUserInvalidPath(string path)
         {
-            var filePath = @"\\machine-name\invalid\path\file.txt";
-            var networkFileSystem = new NetworkFileSystem(filePath);
-            var dataFromFileSystem = networkFileSystem.FetchData();
+            var networkFileSystem = new NetworkFileSystem(path);
+            networkFileSystem.FetchData();
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void AnonymousFetchDataNullUriTest()
+        {
+            var networkFileSystem = new NetworkFileSystem(null);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SecureFetchDataNullUriTest()
+        {
+            var networkFileSystem = new NetworkFileSystem(null, "username", "password", "domain");
         }
     }
 }
